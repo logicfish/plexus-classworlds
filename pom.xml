@@ -28,14 +28,14 @@
   <version>2.6-SEG</version>
   <packaging>bundle</packaging>
 
-  <name>Plexus Classworlds</name>
-  <description>A class loader framework</description>
+  <name>Plexus Classworlds (fork)</name>
+  <description>A class loader framework.  This fork enforces class loader segregation.</description>
   <inceptionYear>2002</inceptionYear>
 
   <scm>
-    <connection>scm:git:git@github.com:sonatype/plexus-classworlds.git</connection>
-    <developerConnection>scm:git:git@github.com:sonatype/plexus-classworlds.git</developerConnection>
-    <url>http://github.com/sonatype/plexus-classworlds</url>
+    <connection>scm:git:git@github.com:logicfish/plexus-classworlds.git</connection>
+    <developerConnection>scm:git:git@github.com:logicfish/plexus-classworlds.git</developerConnection>
+    <url>http://github.com/logicfish/plexus-classworlds</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -139,4 +139,5 @@
 
     </plugins>
   </build>
+  <groupId>org.uk.logicfish</groupId>
 </project>

@@ -157,11 +157,11 @@ public class ConfiguratorTest
 
         assertSame( null, antRealm.getImportClassLoader( "org.apache.tools.Ant" ) );
 
-        assertSame( xmlRealm, antRealm.getImportClassLoader( "org.xml.sax.SAXException" ) );
+        assertSame( xmlRealm.getClassRealmClassLoader(), antRealm.getImportClassLoader( "org.xml.sax.SAXException" ) );
 
         assertSame( null, mavenRealm.getImportClassLoader( "org.apache.maven.app.App" ) );
 
-        assertSame( xmlRealm, mavenRealm.getImportClassLoader( "org.xml.sax.SAXException" ) );
+        assertSame( xmlRealm.getClassRealmClassLoader(), mavenRealm.getImportClassLoader( "org.xml.sax.SAXException" ) );
 
         URL[] urls = globRealm.getURLs();
 

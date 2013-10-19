@@ -45,22 +45,25 @@ import java.util.TreeSet;
  * @author Jason van Zyl
  */
 public class ClassRealm
-    extends URLClassLoader
+//    extends URLClassLoader
+//extends ClassLoader
 {
 
     private ClassWorld world;
 
     private String id;
 
-    private SortedSet<Entry> foreignImports;
+	private ClassRealmClassLoader classRealmClassLoader;
 
-    private SortedSet<Entry> parentImports;
-
-    private Strategy strategy;
-
-    private ClassLoader parentClassLoader;
-
-    private static final boolean isParallelCapable = Closeable.class.isAssignableFrom( URLClassLoader.class );
+//    private SortedSet<Entry> foreignImports;
+//
+//    private SortedSet<Entry> parentImports;
+//
+//    private Strategy strategy;
+//
+//    private ClassLoader parentClassLoader;
+//
+//    private static final boolean isParallelCapable = Closeable.class.isAssignableFrom( URLClassLoader.class );
 
     /**
      * Creates a new class realm.
@@ -72,20 +75,22 @@ public class ClassRealm
      */
     public ClassRealm( ClassWorld world, String id, ClassLoader baseClassLoader )
     {
-        super( new URL[0], baseClassLoader );
+//        super( new URL[0], baseClassLoader );
 
         this.world = world;
 
-        this.id = id;
+//        this.id = id;
 
-        foreignImports = new TreeSet<Entry>();
+//        foreignImports = new TreeSet<Entry>();
 
-        strategy = StrategyFactory.getStrategy( this );
+//        strategy = StrategyFactory.getStrategy( this );
+        
+          this.classRealmClassLoader = new ClassRealmClassLoader(this,id,baseClassLoader);
     }
 
     public String getId()
     {
-        return this.id;
+    	return this.classRealmClassLoader.getId();
     }
 
     public ClassWorld getWorld()
@@ -93,102 +98,113 @@ public class ClassRealm
         return this.world;
     }
 
+    public ClassRealmClassLoader getClassRealmClassLoader() {
+    	return classRealmClassLoader;
+    }
+
     public void importFromParent( String packageName )
     {
-        if ( parentImports == null )
-        {
-            parentImports = new TreeSet<Entry>();
-        }
-
-        parentImports.add( new Entry( null, packageName ) );
+//        if ( parentImports == null )
+//        {
+//            parentImports = new TreeSet<Entry>();
+//        }
+//
+//        parentImports.add( new Entry( null, packageName ) );
+    	getClassRealmClassLoader().importFromParent(packageName);
     }
-
-    boolean isImportedFromParent( String name )
-    {
-        if ( parentImports != null && !parentImports.isEmpty() )
-        {
-            for ( Entry entry : parentImports )
-            {
-                if ( entry.matches( name ) )
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        return true;
-    }
+//
+//    boolean isImportedFromParent( String name )
+//    {
+//        if ( parentImports != null && !parentImports.isEmpty() )
+//        {
+//            for ( Entry entry : parentImports )
+//            {
+//                if ( entry.matches( name ) )
+//                {
+//                    return true;
+//                }
+//            }
+//
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     public void importFrom( String realmId, String packageName )
         throws NoSuchRealmException
     {
-        importFrom( getWorld().getRealm( realmId ), packageName );
+        getClassRealmClassLoader().importFrom( getWorld().getRealm( realmId ).getClassRealmClassLoader(), packageName );
     }
 
     public void importFrom( ClassLoader classLoader, String packageName )
     {
-        foreignImports.add( new Entry( classLoader, packageName ) );
+//        foreignImports.add( new Entry( classLoader, packageName ) );
+    	getClassRealmClassLoader().importFrom(classLoader,packageName);
     }
 
     public ClassLoader getImportClassLoader( String name )
     {
-        for ( Entry entry : foreignImports )
-        {
-            if ( entry.matches( name ) )
-            {
-                return entry.getClassLoader();
-            }
-        }
-
-        return null;
+//        for ( Entry entry : foreignImports )
+//        {
+//            if ( entry.matches( name ) )
+//            {
+//                return entry.getClassLoader();
+//            }
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().getImportClassLoader(name);
     }
 
     public Collection<ClassRealm> getImportRealms()
     {
-        Collection<ClassRealm> importRealms = new HashSet<ClassRealm>();
-
-        for ( Entry entry : foreignImports )
-        {
-            if ( entry.getClassLoader() instanceof ClassRealm )
-            {
-                importRealms.add( (ClassRealm) entry.getClassLoader() );
-            }
-        }
-
-        return importRealms;
+//        Collection<ClassRealm> importRealms = new HashSet<ClassRealm>();
+//
+//        for ( Entry entry : foreignImports )
+//        {
+//            if ( entry.getClassLoader() instanceof ClassRealmClassLoader )
+//            {
+//                importRealms.add( ((ClassRealmClassLoader) entry.getClassLoader()).getRealm() );
+//            }
+//        }
+//
+//        return importRealms;
+    	return getClassRealmClassLoader().getImportRealms();
     }
 
     public Strategy getStrategy()
     {
-        return strategy;
+    	return getClassRealmClassLoader().getStrategy();
     }
 
     public void setParentClassLoader( ClassLoader parentClassLoader )
     {
-        this.parentClassLoader = parentClassLoader;
+    	getClassRealmClassLoader().setParentClassLoader(parentClassLoader);
     }
 
     public ClassLoader getParentClassLoader()
     {
-        return parentClassLoader;
+        return getClassRealmClassLoader().getParentClassLoader();
     }
 
     public void setParentRealm( ClassRealm realm )
     {
-        this.parentClassLoader = realm;
+    	classRealmClassLoader.setParentClassLoader(realm.getClassRealmClassLoader());
     }
 
-    public ClassRealm getParentRealm()
+	public ClassRealm getParentRealm()
     {
-        return ( parentClassLoader instanceof ClassRealm ) ? (ClassRealm) parentClassLoader : null;
+//        return ( parentClassLoader instanceof ClassRealm ) ? (ClassRealm) parentClassLoader : null;
+//		return (classRealmClassLoader.getParentClassLoader() instanceof ClassRealmClassLoader)
+//				? ((ClassRealmClassLoader)classRealmClassLoader.getParentClassLoader()).getClassRealm() : null;
+		return getClassRealmClassLoader().getParentRealm();
     }
 
     public ClassRealm createChildRealm( String id )
         throws DuplicateRealmException
     {
-        ClassRealm childRealm = getWorld().newRealm( id, null );
+        ClassRealm childRealm = getWorld().newRealm( id, (ClassLoader)null );
 
         childRealm.setParentRealm( this );
 
@@ -197,102 +213,108 @@ public class ClassRealm
 
     public void addURL( URL url )
     {
-        String urlStr = url.toExternalForm();
-
-        if ( urlStr.startsWith( "jar:" ) && urlStr.endsWith( "!/" ) )
-        {
-            urlStr = urlStr.substring( 4, urlStr.length() - 2 );
-
-            try
-            {
-                url = new URL( urlStr );
-            }
-            catch ( MalformedURLException e )
-            {
-                e.printStackTrace();
-            }
-        }
-
-        super.addURL( url );
+//        String urlStr = url.toExternalForm();
+//
+//        if ( urlStr.startsWith( "jar:" ) && urlStr.endsWith( "!/" ) )
+//        {
+//            urlStr = urlStr.substring( 4, urlStr.length() - 2 );
+//
+//            try
+//            {
+//                url = new URL( urlStr );
+//            }
+//            catch ( MalformedURLException e )
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        super.addURL( url );
+    	getClassRealmClassLoader().addURL(url);
     }
 
     // ----------------------------------------------------------------------
     // We delegate to the Strategy here so that we can change the behavior
     // of any existing ClassRealm.
     // ----------------------------------------------------------------------
-
+//
     public Class<?> loadClass( String name )
         throws ClassNotFoundException
     {
-        return loadClass( name, false );
+//        return loadClass( name, false );
+    	return getClassRealmClassLoader().loadClass(name);
     }
-
-    protected Class<?> loadClass( String name, boolean resolve )
-        throws ClassNotFoundException
-    {
-        if ( isParallelCapable )
-        {
-            return unsynchronizedLoadClass( name, resolve );
-
-        }
-        else
-        {
-            synchronized ( this )
-            {
-                return unsynchronizedLoadClass( name, resolve );
-            }
-
-        }
-    }
-
-    private Class<?> unsynchronizedLoadClass( String name, boolean resolve )
-        throws ClassNotFoundException
-    {
-        try
-        {
-            // first, try loading bootstrap classes
-            return super.loadClass( name, resolve );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            // next, try loading via imports, self and parent as controlled by strategy
-            return strategy.loadClass( name );
-        }
-    }
-
-    protected Class<?> findClass( String name )
-        throws ClassNotFoundException
-    {
-        /*
-         * NOTE: This gets only called from ClassLoader.loadClass(Class, boolean) while we try to check for bootstrap
-         * stuff. Don't scan our class path yet, loadClassFromSelf() will do this later when called by the strategy.
-         */
-        throw new ClassNotFoundException( name );
-    }
-
+//
+//    protected Class<?> loadClass( String name, boolean resolve )
+//        throws ClassNotFoundException
+//    {
+//        if ( isParallelCapable )
+//        {
+//            return unsynchronizedLoadClass( name, resolve );
+//
+//        }
+//        else
+//        {
+//            synchronized ( this )
+//            {
+//                return unsynchronizedLoadClass( name, resolve );
+//            }
+//
+//        }
+//    }
+//
+//    private Class<?> unsynchronizedLoadClass( String name, boolean resolve )
+//        throws ClassNotFoundException
+//    {
+//        try
+//        {
+//            // first, try loading bootstrap classes
+//            return super.loadClass( name, resolve );
+//        }
+//        catch ( ClassNotFoundException e )
+//        {
+//            // next, try loading via imports, self and parent as controlled by strategy
+//            return strategy.loadClass( name );
+//        }
+//    }
+//
+//    protected Class<?> findClass( String name )
+//        throws ClassNotFoundException
+//    {
+//        /*
+//         * NOTE: This gets only called from ClassLoader.loadClass(Class, boolean) while we try to check for bootstrap
+//         * stuff. Don't scan our class path yet, loadClassFromSelf() will do this later when called by the strategy.
+//         */
+//        throw new ClassNotFoundException( name );
+//    }
+//
     public URL getResource( String name )
     {
-        URL resource = super.getResource( name );
-        return resource != null ? resource : strategy.getResource( name );
+//        URL resource = super.getResource( name );
+//        return resource != null ? resource : strategy.getResource( name );
+    	return getClassRealmClassLoader().getResource(name);
     }
 
     public URL findResource( String name )
     {
-        return super.findResource( name );
+//        return super.findResource( name );
+    	return getClassRealmClassLoader().findResource(name);
     }
 
     public Enumeration<URL> getResources( String name )
         throws IOException
     {
-        Collection<URL> resources = new LinkedHashSet<URL>( Collections.list( super.getResources( name ) ) );
-        resources.addAll( Collections.list( strategy.getResources( name ) ) );
-        return Collections.enumeration( resources );
+//        Collection<URL> resources = new LinkedHashSet<URL>( Collections.list( super.getResources( name ) ) );
+//        resources.addAll( Collections.list( strategy.getResources( name ) ) );
+//        return Collections.enumeration( resources );
+       	return getClassRealmClassLoader().getResources(name);
     }
 
     public Enumeration<URL> findResources( String name )
         throws IOException
     {
-        return super.findResources( name );
+//        return super.findResources( name );
+       	return getClassRealmClassLoader().findResources(name);
     }
 
     // ----------------------------------------------------------------------------
@@ -306,127 +328,132 @@ public class ClassRealm
 
     public void display( PrintStream out )
     {
-        out.println( "-----------------------------------------------------" );
-
-        for ( ClassRealm cr = this; cr != null; cr = cr.getParentRealm() )
-        {
-            out.println( "realm =    " + cr.getId() );
-            out.println( "strategy = " + cr.getStrategy().getClass().getName() );
-
-            showUrls( cr, out );
-
-            out.println();
-        }
-
-        out.println( "-----------------------------------------------------" );
+       	getClassRealmClassLoader().display(out);
+//    	classRealmClassLoader.display(out);
+//        out.println( "-----------------------------------------------------" );
+//
+//        for ( ClassRealm cr = this; cr != null; cr = cr.getParentRealm() )
+//        {
+//            out.println( "realm =    " + cr.getId() );
+//            out.println( "strategy = " + cr.getStrategy().getClass().getName() );
+//
+//            showUrls( cr, out );
+//
+//            out.println();
+//        }
+//
+//        out.println( "-----------------------------------------------------" );
     }
 
-    private static void showUrls( ClassRealm classRealm, PrintStream out )
-    {
-        URL[] urls = classRealm.getURLs();
-
-        for ( int i = 0; i < urls.length; i++ )
-        {
-            out.println( "urls[" + i + "] = " + urls[i] );
-        }
-
-        out.println( "Number of foreign imports: " + classRealm.foreignImports.size() );
-
-        for ( Entry entry : classRealm.foreignImports )
-        {
-            out.println( "import: " + entry );
-        }
-
-        if ( classRealm.parentImports != null )
-        {
-            out.println( "Number of parent imports: " + classRealm.parentImports.size() );
-
-            for ( Entry entry : classRealm.parentImports )
-            {
-                out.println( "import: " + entry );
-            }
-        }
-    }
-
-    public String toString()
-    {
-        return "ClassRealm[" + getId() + ", parent: " + getParentClassLoader() + "]";
-    }
-
-    //---------------------------------------------------------------------------------------------
-    // Search methods that can be ordered by strategies to load a class
-    //---------------------------------------------------------------------------------------------
-
+//    private static void showUrls( ClassRealm classRealm, PrintStream out )
+//    {
+//        URL[] urls = classRealm.getURLs();
+//
+//        for ( int i = 0; i < urls.length; i++ )
+//        {
+//            out.println( "urls[" + i + "] = " + urls[i] );
+//        }
+//
+//        out.println( "Number of foreign imports: " + classRealm.foreignImports.size() );
+//
+//        for ( Entry entry : classRealm.foreignImports )
+//        {
+//            out.println( "import: " + entry );
+//        }
+//
+//        if ( classRealm.parentImports != null )
+//        {
+//            out.println( "Number of parent imports: " + classRealm.parentImports.size() );
+//
+//            for ( Entry entry : classRealm.parentImports )
+//            {
+//                out.println( "import: " + entry );
+//            }
+//        }
+//    }
+//
+//    public String toString()
+//    {
+//        return "ClassRealm[" + getId() + ", parent: " + getParentClassLoader() + "]";
+//    }
+//
+//    //---------------------------------------------------------------------------------------------
+//    // Search methods that can be ordered by strategies to load a class
+//    //---------------------------------------------------------------------------------------------
+//
     public Class<?> loadClassFromImport( String name )
     {
-        ClassLoader importClassLoader = getImportClassLoader( name );
-
-        if ( importClassLoader != null )
-        {
-            try
-            {
-                return importClassLoader.loadClass( name );
-            }
-            catch ( ClassNotFoundException e )
-            {
-                return null;
-            }
-        }
-
-        return null;
+//        ClassLoader importClassLoader = getImportClassLoader( name );
+//
+//        if ( importClassLoader != null )
+//        {
+//            try
+//            {
+//                return importClassLoader.loadClass( name );
+//            }
+//            catch ( ClassNotFoundException e )
+//            {
+//                return null;
+//            }
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().loadClassFromImport(name);
     }
 
     public Class<?> loadClassFromSelf( String name )
     {
-        synchronized ( getClassRealmLoadingLock( name ) )
-        {
-            try
-            {
-                Class<?> clazz = findLoadedClass( name );
-
-                if ( clazz == null )
-                {
-                    clazz = super.findClass( name );
-                }
-
-                return clazz;
-            }
-            catch ( ClassNotFoundException e )
-            {
-                return null;
-            }
-        }
+//        synchronized ( getClassRealmLoadingLock( name ) )
+//        {
+//            try
+//            {
+//                Class<?> clazz = findLoadedClass( name );
+//
+//                if ( clazz == null )
+//                {
+//                    clazz = super.findClass( name );
+//                }
+//
+//                return clazz;
+//            }
+//            catch ( ClassNotFoundException e )
+//            {
+//                return null;
+//            }
+//        }
+    	return getClassRealmClassLoader().loadClassFromSelf(name);
     }
-
-    private Object getClassRealmLoadingLock( String name )
-    {
-        if ( isParallelCapable )
-        {
-            return getClassLoadingLock( name );
-        }
-        else
-        {
-            return this;
-        }
-    }
+//
+//    private Object getClassRealmLoadingLock( String name )
+//    {
+//        if ( isParallelCapable )
+//        {
+//            return getClassLoadingLock( name );
+//        }
+//        else
+//        {
+//            return this;
+//        }
+//    }
 
     public Class<?> loadClassFromParent( String name )
     {
-        ClassLoader parent = getParentClassLoader();
-
-        if ( parent != null && isImportedFromParent( name ) )
-        {
-            try
-            {
-                return parent.loadClass( name );
-            }
-            catch ( ClassNotFoundException e )
-            {
-                return null;
-            }
-        }
-
-        return null;
+//        ClassLoader parent = getParentClassLoader();
+//
+//        if ( parent != null && isImportedFromParent( name ) )
+//        {
+//            try
+//            {
+//                return parent.loadClass( name );
+//            }
+//            catch ( ClassNotFoundException e )
+//            {
+//                return null;
+//            }
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().loadClassFromParent(name);
     }
 
     //---------------------------------------------------------------------------------------------
@@ -435,33 +462,36 @@ public class ClassRealm
 
     public URL loadResourceFromImport( String name )
     {
-        ClassLoader importClassLoader = getImportClassLoader( name );
-
-        if ( importClassLoader != null )
-        {
-            return importClassLoader.getResource( name );
-        }
-
-        return null;
+//        ClassLoader importClassLoader = getImportClassLoader( name );
+//
+//        if ( importClassLoader != null )
+//        {
+//            return importClassLoader.getResource( name );
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().loadResourceFromParent(name);
     }
 
     public URL loadResourceFromSelf( String name )
     {
-        return super.findResource( name );
+//        return super.findResource( name );
+    	return getClassRealmClassLoader().loadResourceFromSelf(name);
     }
 
     public URL loadResourceFromParent( String name )
     {
-        ClassLoader parent = getParentClassLoader();
-
-        if ( parent != null && isImportedFromParent( name ) )
-        {
-            return parent.getResource( name );
-        }
-        else
-        {
-            return null;
-        }
+//        ClassLoader parent = getParentClassLoader();
+//
+//        if ( parent != null && isImportedFromParent( name ) )
+//        {
+//            return parent.getResource( name );
+//        }
+//        else
+//        {
+//            return null;
+//        }
+    	return getClassRealmClassLoader().loadResourceFromParent(name);
     }
 
     //---------------------------------------------------------------------------------------------
@@ -470,60 +500,65 @@ public class ClassRealm
 
     public Enumeration<URL> loadResourcesFromImport( String name )
     {
-        ClassLoader importClassLoader = getImportClassLoader( name );
-
-        if ( importClassLoader != null )
-        {
-            try
-            {
-                return importClassLoader.getResources( name );
-            }
-            catch ( IOException e )
-            {
-                return null;
-            }
-        }
-
-        return null;
+//        ClassLoader importClassLoader = getImportClassLoader( name );
+//
+//        if ( importClassLoader != null )
+//        {
+//            try
+//            {
+//                return importClassLoader.getResources( name );
+//            }
+//            catch ( IOException e )
+//            {
+//                return null;
+//            }
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().loadResourcesFromImport(name);
     }
 
     public Enumeration<URL> loadResourcesFromSelf( String name )
     {
-        try
-        {
-            return super.findResources( name );
-        }
-        catch ( IOException e )
-        {
-            return null;
-        }
+//        try
+//        {
+//            return super.findResources( name );
+//        }
+//        catch ( IOException e )
+//        {
+//            return null;
+//        }
+    	return getClassRealmClassLoader().loadResourcesFromSelf(name);
     }
 
     public Enumeration<URL> loadResourcesFromParent( String name )
     {
-        ClassLoader parent = getParentClassLoader();
-
-        if ( parent != null && isImportedFromParent( name ) )
-        {
-            try
-            {
-                return parent.getResources( name );
-            }
-            catch ( IOException e )
-            {
-                // eat it
-            }
-        }
-
-        return null;
+//        ClassLoader parent = getParentClassLoader();
+//
+//        if ( parent != null && isImportedFromParent( name ) )
+//        {
+//            try
+//            {
+//                return parent.getResources( name );
+//            }
+//            catch ( IOException e )
+//            {
+//                // eat it
+//            }
+//        }
+//
+//        return null;
+    	return getClassRealmClassLoader().loadResourcesFromParent(name);
     }
-
-    static
-    {
-        if  (isParallelCapable) // Avoid running this method on older jdks
-        {
-            registerAsParallelCapable();
-        }
+    
+//    static
+//    {
+//        if  (isParallelCapable) // Avoid running this method on older jdks
+//        {
+//            registerAsParallelCapable();
+//        }
+//    }
+    public URL[] getURLs() {
+        return getClassRealmClassLoader().getURLs();
     }
-
 }

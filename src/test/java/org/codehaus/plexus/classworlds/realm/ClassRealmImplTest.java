@@ -75,11 +75,11 @@ public class ClassRealmImplTest
 
         mainRealm.importFrom( "werkflow", "com.werken.werkflow" );
 
-        assertSame( werkflowRealm, mainRealm.getImportClassLoader( "com.werken.werkflow.WerkflowEngine" ) );
+        assertSame( werkflowRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.werkflow.WerkflowEngine" ) );
 
-        assertSame( werkflowRealm, mainRealm.getImportClassLoader( "com/werken/werkflow/some.properties" ) );
+        assertSame( werkflowRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com/werken/werkflow/some.properties" ) );
 
-        assertSame( werkflowRealm, mainRealm.getImportClassLoader( "com.werken.werkflow.process.ProcessManager" ) );
+        assertSame( werkflowRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.werkflow.process.ProcessManager" ) );
 
         assertSame( null, mainRealm.getImportClassLoader( "com.werken.blissed.Process" ) );
 
@@ -101,13 +101,13 @@ public class ClassRealmImplTest
 
         mainRealm.importFrom( "blissed", "com.werken.blissed" );
 
-        assertSame( werkflowRealm, mainRealm.getImportClassLoader( "com.werken.werkflow.WerkflowEngine" ) );
+        assertSame( werkflowRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.werkflow.WerkflowEngine" ) );
 
-        assertSame( werkflowRealm, mainRealm.getImportClassLoader( "com.werken.werkflow.process.ProcessManager" ) );
+        assertSame( werkflowRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.werkflow.process.ProcessManager" ) );
 
-        assertSame( blissedRealm, mainRealm.getImportClassLoader( "com.werken.blissed.Process" ) );
+        assertSame( blissedRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.blissed.Process" ) );
 
-        assertSame( blissedRealm, mainRealm.getImportClassLoader( "com.werken.blissed.guard.BooleanGuard" ) );
+        assertSame( blissedRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "com.werken.blissed.guard.BooleanGuard" ) );
 
         assertSame( null, mainRealm.getImportClassLoader( "java.lang.Object" ) );
 
@@ -131,17 +131,17 @@ public class ClassRealmImplTest
 
         mainRealm.importFrom( "fooBarBaz", "foo.bar.baz" );
 
-        assertSame( fooRealm, mainRealm.getImportClassLoader( "foo.Goober" ) );
+        assertSame( fooRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.Goober" ) );
 
-        assertSame( fooRealm, mainRealm.getImportClassLoader( "foo.cheese.Goober" ) );
+        assertSame( fooRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.cheese.Goober" ) );
 
-        assertSame( fooBarRealm, mainRealm.getImportClassLoader( "foo.bar.Goober" ) );
+        assertSame( fooBarRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.Goober" ) );
 
-        assertSame( fooBarRealm, mainRealm.getImportClassLoader( "foo.bar.cheese.Goober" ) );
+        assertSame( fooBarRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.cheese.Goober" ) );
 
-        assertSame( fooBarBazRealm, mainRealm.getImportClassLoader( "foo.bar.baz.Goober" ) );
+        assertSame( fooBarBazRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.baz.Goober" ) );
 
-        assertSame( fooBarBazRealm, mainRealm.getImportClassLoader( "foo.bar.baz.cheese.Goober" ) );
+        assertSame( fooBarBazRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.baz.cheese.Goober" ) );
 
         assertSame( null, mainRealm.getImportClassLoader( "java.lang.Object" ) );
 
@@ -165,17 +165,17 @@ public class ClassRealmImplTest
 
         mainRealm.importFrom( "foo", "foo" );
 
-        assertSame( fooRealm, mainRealm.getImportClassLoader( "foo.Goober" ) );
+        assertSame( fooRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.Goober" ) );
 
-        assertSame( fooRealm, mainRealm.getImportClassLoader( "foo.cheese.Goober" ) );
+        assertSame( fooRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.cheese.Goober" ) );
 
-        assertSame( fooBarRealm, mainRealm.getImportClassLoader( "foo.bar.Goober" ) );
+        assertSame( fooBarRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.Goober" ) );
 
-        assertSame( fooBarRealm, mainRealm.getImportClassLoader( "foo.bar.cheese.Goober" ) );
+        assertSame( fooBarRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.cheese.Goober" ) );
 
-        assertSame( fooBarBazRealm, mainRealm.getImportClassLoader( "foo.bar.baz.Goober" ) );
+        assertSame( fooBarBazRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.baz.Goober" ) );
 
-        assertSame( fooBarBazRealm, mainRealm.getImportClassLoader( "foo.bar.baz.cheese.Goober" ) );
+        assertSame( fooBarBazRealm.getClassRealmClassLoader(), mainRealm.getImportClassLoader( "foo.bar.baz.cheese.Goober" ) );
 
         assertSame( null, mainRealm.getImportClassLoader( "java.lang.Object" ) );
 
@@ -292,13 +292,13 @@ public class ClassRealmImplTest
 
         assertNotNull( classA );
 
-        assertEquals( realmA, classA.getClassLoader() );
+        assertEquals( realmA.getClassRealmClassLoader(), classA.getClassLoader() );
 
         Class<?> classMain = mainRealm.loadClass( "a.A" );
 
         assertNotNull( classMain );
 
-        assertEquals( realmA, classMain.getClassLoader() );
+        assertEquals( realmA.getClassRealmClassLoader(), classMain.getClassLoader() );
 
         assertSame( classA, classMain );
     }
@@ -344,11 +344,11 @@ public class ClassRealmImplTest
         assertNotNull( classB_B );
         assertNotNull( classC_C );
 
-        assertEquals( realmA, classA_A.getClassLoader() );
+        assertEquals( realmA.getClassRealmClassLoader(), classA_A.getClassLoader() );
 
-        assertEquals( realmB, classB_B.getClassLoader() );
+        assertEquals( realmB.getClassRealmClassLoader(), classB_B.getClassLoader() );
 
-        assertEquals( realmC, classC_C.getClassLoader() );
+        assertEquals( realmC.getClassRealmClassLoader(), classC_C.getClassLoader() );
 
         // load from C
 
@@ -358,7 +358,7 @@ public class ClassRealmImplTest
 
         assertSame( classA_A, classA_C );
 
-        assertEquals( realmA, classA_C.getClassLoader() );
+        assertEquals( realmA.getClassRealmClassLoader(), classA_C.getClassLoader() );
 
         Class<?> classB_C = realmC.loadClass( "b.B" );
 
@@ -366,7 +366,7 @@ public class ClassRealmImplTest
 
         assertSame( classB_B, classB_C );
 
-        assertEquals( realmB, classB_C.getClassLoader() );
+        assertEquals( realmB.getClassRealmClassLoader(), classB_C.getClassLoader() );
 
         // load from A
 
@@ -376,7 +376,7 @@ public class ClassRealmImplTest
 
         assertSame( classC_C, classC_A );
 
-        assertEquals( realmC, classC_A.getClassLoader() );
+        assertEquals( realmC.getClassRealmClassLoader(), classC_A.getClassLoader() );
 
         try
         {

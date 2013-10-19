@@ -65,6 +65,12 @@ public class ClassWorld
         return newRealm( id, getClass().getClassLoader() );
     }
 
+    public ClassRealm newRealm( String id, ClassRealm classRealm )
+            throws DuplicateRealmException
+    {
+    	if(classRealm==null) return newRealm(id,(ClassLoader)null);
+    	return newRealm(id,classRealm.getClassRealmClassLoader());
+    }
     public synchronized ClassRealm newRealm( String id, ClassLoader classLoader )
         throws DuplicateRealmException
     {

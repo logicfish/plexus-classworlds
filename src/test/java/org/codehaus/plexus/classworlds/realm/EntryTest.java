@@ -42,8 +42,8 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry1 = new Entry( r, "org.test" );
-        Entry entry2 = new Entry( r, "org.test.impl" );
+        Entry entry1 = new Entry( r.getClassRealmClassLoader(), "org.test" );
+        Entry entry2 = new Entry( r.getClassRealmClassLoader(), "org.test.impl" );
 
         assertTrue( "org.test > org.test.impl", entry1.compareTo( entry2 ) > 0 );
     }
@@ -60,8 +60,8 @@ public class EntryTest
         ClassRealm r1 = cw.newRealm( "test1" );
         ClassRealm r2 = cw.newRealm( "test2" );
 
-        Entry entry1 = new Entry( r1, "org.test" );
-        Entry entry2 = new Entry( r2, "org.test" );
+        Entry entry1 = new Entry( r1.getClassRealmClassLoader(), "org.test" );
+        Entry entry2 = new Entry( r2.getClassRealmClassLoader(), "org.test" );
 
         assertTrue( "entry1 == entry2", entry1.equals( entry2 ) );
         assertTrue( "entry1.hashCode() == entry2.hashCode()", entry1.hashCode() == entry2.hashCode() );
@@ -73,7 +73,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test" );
 
         assertTrue( entry.matches( "org.test.MyClass" ) );
         assertTrue( entry.matches( "org.test.MyClass$NestedClass" ) );
@@ -88,7 +88,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test.MyClass" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test.MyClass" );
 
         assertTrue( entry.matches( "org.test.MyClass" ) );
         assertTrue( entry.matches( "org.test.MyClass$NestedClass" ) );
@@ -102,7 +102,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test" );
 
         assertTrue( entry.matches( "org/test/MyClass.class" ) );
         assertTrue( entry.matches( "org/test/MyClass$NestedClass.class" ) );
@@ -117,7 +117,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test.MyClass" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test.MyClass" );
 
         assertTrue( entry.matches( "org/test/MyClass.class" ) );
         assertTrue( entry.matches( "org/test/MyClass$NestedClass.class" ) );
@@ -131,7 +131,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "" );
 
         assertTrue( entry.matches( "org.test.MyClass" ) );
         assertTrue( entry.matches( "org.test.MyClass$NestedClass" ) );
@@ -145,12 +145,12 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry1 = new Entry( r, "some.properties" );
+        Entry entry1 = new Entry( r.getClassRealmClassLoader(), "some.properties" );
 
         assertTrue( entry1.matches( "some.properties" ) );
         assertFalse( entry1.matches( "other.properties" ) );
 
-        Entry entry2 = new Entry( r, "org/test/some.properties" );
+        Entry entry2 = new Entry( r.getClassRealmClassLoader(), "org/test/some.properties" );
 
         assertTrue( entry2.matches( "org/test/some.properties" ) );
         assertFalse( entry2.matches( "org/test/other.properties" ) );
@@ -162,7 +162,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test.*" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test.*" );
 
         assertTrue( entry.matches( "org.test.MyClass" ) );
         assertTrue( entry.matches( "org.test.MyClass$NestedClass" ) );
@@ -177,7 +177,7 @@ public class EntryTest
         ClassWorld cw = new ClassWorld();
         ClassRealm r = cw.newRealm( "test1" );
 
-        Entry entry = new Entry( r, "org.test.*" );
+        Entry entry = new Entry( r.getClassRealmClassLoader(), "org.test.*" );
 
         assertTrue( entry.matches( "org/test/MyClass.class" ) );
         assertTrue( entry.matches( "org/test/MyClass$NestedClass.class" ) );
